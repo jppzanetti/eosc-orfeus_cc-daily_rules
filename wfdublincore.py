@@ -81,13 +81,12 @@ class dublinCore():
         #mynet = str(self.config["DUBLIN_CORE"]["AUTH_NETWORKS"])
         
         query = self.config['DUBLIN_CORE']['STATION_ENDPOINT']+"network="+mynet+"&format=text"
-        #query = "http://webservices.rm.ingv.it/fdsnws/station/1/query?"+"network="+mynet+"&format=text"
         conn = http.client.HTTPConnection(self.config['DUBLIN_CORE']['HTTP_CONNECTION'], 80)
-        #conn = http.client.HTTPConnection("webservices.rm.ingv.it", 80)
+
         conn.connect()
         conn.request("GET", query)
         response = conn.getresponse()
-        dataStations = response.read()
+        dataStations = response.read().decode('utf-8')
         conn.close() 
         
         try:
