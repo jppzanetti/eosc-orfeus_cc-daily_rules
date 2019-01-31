@@ -52,6 +52,20 @@ class sequencer(object):
             pass
 
 
+    #..................................... iPUT_INGESTION - 
+    #
+    # Exec Proc: Put Digital objects into iRODS
+    #
+    def put(self):
+
+        self.log.info("iPUT on iRODS of : "+self.digitObjProperty['file'])
+        try:
+            self.irods.doPut( self.digitObjProperty['dirname'], self.digitObjProperty['collname'], self.digitObjProperty['filename'])
+        except Exception as ex:
+            self.log.error("Could not execute a doPut ")
+            self.log.error(ex)
+            pass
+
 
     #..................................... TEST_RULE - 
     #

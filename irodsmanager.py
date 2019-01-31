@@ -82,6 +82,31 @@ class irodsDAO():
         #print (obj)
        
     #
+    # irods ingestion iPUT
+    #
+    def doPut(self, dirname, collname, filename):   
+
+        self._irodsConnect()
+
+        obj_file = os.path.join(dirname, filename)
+        obj_path = '{collname}/{filename}'.format(**locals())
+        self._checkCollExsist(collname)
+        
+        # register file in test collection
+        self.log.info("check obj_file : "+obj_file)
+        self.log.info("check obj_path : "+obj_path)
+
+        self.log.info("check or create a collection recursively : "+collname)
+        try:
+            self.session.data_objects.put(obj_file, obj_path)
+            self.log.info("file put! : "+obj_path)
+        except Exception as ex:
+            self.log.error("Could not put a file_obj  ")         
+            self.log.error(ex)
+            pass
+
+
+    #
     # Execute a demo rule
     #
     def _ruleExec(self, rule_file_path):
