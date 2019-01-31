@@ -34,7 +34,7 @@ class sequencer(object):
         self.WFcollector = WFcollector
         self.dublinCore = dublinCore
 
-        self.steps_definition = collections.OrderedDict(sorted(self.ruleMap['SEQUENCE'].items())) 
+        self.steps_definition = collections.OrderedDict(sorted(self.ruleMap['SEQUENCE'].items()))
        
 
     #..................................... iREG_INGESTION - 
@@ -72,8 +72,7 @@ class sequencer(object):
     # Exec Rule: test rule execution w/o params (called directly self.digitObjProperty['file'].r)
     #
     def testRule(self):
-        # @TODO: fix this:
-        rule_path = '/home/joao/b2stage/eosc-orfeus_cc-daily_rules/rules/eudatGetV.r'
+        rule_path =  self.ruleMap['RULE_PATHS']['TEST_RULE']
         self.log.info("exec TEST rule  on  : "+self.digitObjProperty['file'])
 
         try:
@@ -96,10 +95,9 @@ class sequencer(object):
         self.log.info("call PID rule  on  : "+self.digitObjProperty['file'])
 
         # make a pid
-        retValue = self.irods.rulePIDsingle( self.digitObjProperty['object_path'])
-
-        #self.log.info(" PID for digitalObject: "+self.digitObjProperty['object_path']+" is: " retValue[5])
-
+        retValue = self.irods.rulePIDsingle( self.digitObjProperty['object_path'], self.ruleMap['RULE_PATHS']['PID'])
+        #print (retValue)
+        
         #return retValue
 
 
@@ -115,25 +113,21 @@ class sequencer(object):
         self.log.info("call REP rule  target_path : "+self.digitObjProperty['target_path'])
 
         # make a replica
-        retValue = self.irods.ruleReplication(self.digitObjProperty['object_path'], self.digitObjProperty['target_path'])
-
-        #self.log.info(" REPLICA for digitalObject: "+self.digitObjProperty['object_path']+" in: " retValue[5])
+        retValue = self.irods.ruleReplication(self.digitObjProperty['object_path'], self.digitObjProperty['target_path'], self.ruleMap['RULE_PATHS']['REPLICA'])
 
         #return retValue
 
 
     #..................................... REGISTRATION_REPLICA -  
     #
-    # Exec Rule: Registration of Rmote PID into local ICAT
+    # Exec Rule: Registration of Remote PID into local ICAT
     #
     def RegistrationRule(self):
         
         self.log.info("call REGISTRATION_REPLICA rule  on  : "+self.digitObjProperty['file'])
 
-        # make a pid
-        retValue = self.irods.ruleRegistration( self.digitObjProperty['object_path'], self.digitObjProperty['target_path'])
-
-        #self.log.info(" REGISTRATION for digitalObject: "+self.digitObjProperty['object_path']+" with: " retValue[5])
+        # make a registration
+        retValue = self.irods.ruleRegistration( self.digitObjProperty['object_path'], self.digitObjProperty['target_path'], self.ruleMap['RULE_PATHS']['REGISTER'])
 
         #return retValue
 
@@ -148,12 +142,11 @@ class sequencer(object):
         try:
             
             self.dublinCore.processDCmeta(self.mongo, self.irods, self.digitObjProperty['collname'], self.digitObjProperty['start_time'], self.digitObjProperty['file'], self.digitObjProperty['datastations'])
+            self.log.info(" DUBLIN CORE for digitalObject: "+self.digitObjProperty['object_path']+" is: OK" )
         except Exception as ex:
             self.log.error("Could not process DublinCore metadata")
             self.log.error(ex)
-            pass
-
-        #self.log.info(" DUBLIN CORE for digitalObject: "+self.digitObjProperty['object_path']+" " )    
+            pass        
 
 
     #..................................... WFCATALOG_META -
@@ -165,14 +158,12 @@ class sequencer(object):
         self.log.info("called collect WF CATALOG METADATA of : "+self.digitObjProperty['file'])
         try:
             self.WFcollector.collectMetadata(self.digitObjProperty['file'])
+            self.log.info(" WF METADATA for digitalObject: "+self.digitObjProperty['object_path']+" is: OK" )
         except Exception as ex:
             self.log.error("Could not compute WF metadata")
             self.log.error(ex)
-            pass
-
-        #self.log.info(" WF METADATA for digitalObject: "+self.digitObjProperty['object_path']+"  " )  
+            pass          
         
-
 
     #
     # run entire Sequence
