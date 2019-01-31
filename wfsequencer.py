@@ -58,9 +58,8 @@ class sequencer(object):
     # Exec Rule: test rule execution w/o params (called directly self.digitObjProperty['file'].r)
     #
     def testRule(self):
-        
         # @TODO: fix this:
-        rule_path = '/var/lib/irods/myrules/source_final/eudatGetV.r'
+        rule_path = '/home/joao/b2stage/eosc-orfeus_cc-daily_rules/rules/eudatGetV.r'
         self.log.info("exec TEST rule  on  : "+self.digitObjProperty['file'])
 
         try:
