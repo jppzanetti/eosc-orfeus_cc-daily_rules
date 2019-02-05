@@ -19,3 +19,33 @@ All the metadata extracted here are inserted into mongoDB instance that is the s
 
 At this time we have a few rules and some actions but, in the future we can think about increase or change they, following the ORFEUS_CC nodes needs/policy. 
 
+### Usage
+```
+wfcatalog.py [-h] [--config] [--version]
+             [--dir DIR] [--file FILE] [--list LIST]
+             [--past {day,yesterday,week,fortnight,month}]
+             [--date DATE] [--range RANGE]
+             [--flags] [--csegs] [--hourly] [--logfile LOGFILE]
+             [--update] [--force] [--delete] [--dc_on]
+```
+
+Arguments:
+* `--dir`, `--file`, `--list`, `--past`, `--date` Define the files to be processed. Exactly one of these options need to be used to call the script:
+  * `--dir DIR` Point to a directory containing the files to process.
+  * `--file FILE` Choose a specific file to be processed.
+  * `--list LIST` Specific list of files to be processed (e.g., `["file1", "file2"]`).
+  * `--past {day,yesterday,week,fortnight,month}` Process files in a specific range in the past.
+  * `--date DATE` Process files for a specific date.
+  * `--range RANGE` A number of days after a specific date given by `--date`, default 1.
+
+Help options:
+* `-h`, `--help`, `--config`, `--version` Show the script help, configuration, or version and exits.
+
+Optional arguments:
+* `--csegs` Include continuous segments in result.
+* `--hourly` Include hourly granules in result.
+* `--logfile LOGFILE` Set custom logfile.
+* `--update` Update existing documents in the database.
+* `--force` Force file updates.
+* `--delete` Delete files from database.
+* `--dc_on` Extract Dublin Core metadata for `do_wf` collection.
