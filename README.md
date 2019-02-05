@@ -19,7 +19,19 @@ All the metadata extracted here are inserted into mongoDB instance that is the s
 
 At this time we have a few rules and some actions but, in the future we can think about increase or change they, following the ORFEUS_CC nodes needs/policy. 
 
-### Usage
+### Configuration
+
+The configuration is done in two JSON files: config.json and ruleMap.json.
+
+The first one, config.json, contains the configurations for managing policies, for example: MongoDB and iRODS connection configurations, Dublin Core definitions, log file name, and filters.
+
+The second file, ruleMap.json, tells wfsequencer.py what is the workflow to be applied to each file. It defines:
+1) which rules are available, in `_list_available_rules_`,
+1) the mapping between rules and methods in wfsequencer.py, in `RULE_MAP`,
+1) the sequence in which the rules are called, in `SEQUENCE`, and
+1) the locations of external iRODS rules in disk, in `RULE_PATHS`.
+
+### How to call the policy manager script
 ```
 wfcatalog.py [-h] [--config] [--version]
              [--dir DIR] [--file FILE] [--list LIST]
@@ -49,3 +61,8 @@ Optional arguments:
 * `--force` Force file updates.
 * `--delete` Delete files from database.
 * `--dc_on` Extract Dublin Core metadata for `do_wf` collection.
+
+##### Usage example
+```
+wfcatalog.py --dir /data/SDS/ --dc_on
+```
