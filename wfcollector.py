@@ -62,7 +62,7 @@ Authors:
   [--flags] include miniseed header percentages, timing correction, and timing quality
   [--hourly] include hourly granules
 
-  [--self.config] show Collector self.configuration
+  [--config] show Collector self.configuration
   [--version] show Collector version
 
   ### File input options
@@ -141,7 +141,7 @@ class WFCatalogCollector():
       'delete': False,
       'update': False,
       'force': False,
-      'self.config': False,
+      'config': False,
       'version': False,
     }
 
@@ -150,6 +150,12 @@ class WFCatalogCollector():
       default_options[key] = self.parsedargs[key]
 
     self.args = default_options
+
+    # Show self.configuration and exit
+    if self.args['config']:
+      self.showconfig(); sys.exit(0)
+    if self.args['version']:
+      self.showVersion(); sys.exit(0)
 
     # Check if there is a single input method
     nInput = 6 - [self.args['date'], self.args['file'], self.args['dir'], self.args['list'], self.args['past'], self.args['glob']].count(None)
@@ -160,12 +166,6 @@ class WFCatalogCollector():
 
     if not self.config['MONGO']['ENABLED'] and self.args['update']:
       raise Exception("Cannot update files when database connection is disabled")
-
-    # Show self.configuration and exit
-    if self.args['self.config']:
-      self.showself.config(); sys.exit(0)
-    if self.args['version']:
-      self.showVersion(); sys.exit(0)
 
     self._printArguments()
     self._setGranularity()
@@ -1164,7 +1164,7 @@ class WFCatalogCollector():
 
   def showconfig(self):
     """
-    WFCatalogCollector.showself.config
+    WFCatalogCollector.showconfig
     > dumps script self.configuration to screen
     """
 
