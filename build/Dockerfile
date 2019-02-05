@@ -14,24 +14,19 @@ FROM       ubuntu:18.04
 MAINTAINER massimo.fares@ingv.it
 
 
-RUN apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y apt-transport-https
-RUN apt-get update
 #install dependencies
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y apt-transport-https wget git vim python-dev python-pycurl python-simplejson 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y    libcurl4-gnutls-dev libssl-dev pkg-config gcc-4.8 iputils-ping
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y    python python-psutil python-requests python-jsonschema libfuse2
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y    python-setuptools python-dev build-essential python-pip 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y    libxml2-dev libxslt1-dev libz-dev libfreetype6-dev 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y    python-numpy python-scipy python-matplotlib 
+RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y apt-transport-https wget git vim python-dev python-pycurl python-simplejson \
+    libcurl4-gnutls-dev libssl-dev pkg-config gcc-4.8 iputils-ping \
+    python python-psutil python-requests python-jsonschema libfuse2 \
+    python-setuptools python-dev build-essential python-pip \
+    libxml2-dev libxslt1-dev libz-dev libfreetype6-dev \
+    python-numpy python-scipy python-matplotlib 
 
 RUN apt-get update
 
-# mongo driver
-RUN pip install pymongo
-
-# irods python
-RUN pip install python-irodsclient
+# mongo driver and irods client
+RUN pip install pymongo python-irodsclient
 
 # irods icommand
 RUN mkdir -p /opt/icomm
