@@ -93,7 +93,6 @@ class irodsDAO():
         obj_path = '{collname}/{filename}'.format(**locals())
         self._checkCollExist(collname)
         
-        # register file in test collection
         self.log.info("check obj_file : "+obj_file)
         self.log.info("check obj_path : "+obj_path)
 
@@ -118,11 +117,42 @@ class irodsDAO():
         obj_path = '{collname}/{filename}'.format(**locals())
         self._checkCollExist(collname)
 
-        # register file in test collection
         self.log.info("check obj_file : "+obj_file)
         self.log.info("check obj_path : "+obj_path)
 
         self.log.info("check or create a collection recursively : "+collname)
+        try:
+            options = {kw.RESC_NAME_KW: "compResc", kw.PURGE_CACHE_KW: 1, kw.REG_CHKSUM_KW: 1}
+            self.session.data_objects.put(obj_file, obj_path, **options)
+            self.log.info("file put! : "+obj_path)
+        except Exception as ex:
+            self.log.error("Could not put a file_obj  ")         
+            self.log.error(ex)
+            pass
+
+
+    #
+    # irods ingestion iPUT
+    #
+    def doPutIfAusent(self, dirname, collname, filename):   
+
+        self._irodsConnect()
+
+        obj_file = os.path.join(dirname, filename)
+        obj_path = '{collname}/{filename}'.format(**locals())
+        self._checkCollExist(collname)
+
+        self.log.info("check obj_file : "+obj_file)
+        self.log.info("check obj_path : "+obj_path)
+
+        self.log.info("check or create a collection recursively : "+collname)
+
+        # Check whether the file is already in irods
+        query = self.session.query(DataObject.name).filter(DataObject.name == filename)
+        if len(query.execute()) > 0:
+            self.log.info("File already in iRODS. Put canceled.")
+            return
+            
         try:
             options = {kw.RESC_NAME_KW: "compResc", kw.PURGE_CACHE_KW: 1, kw.REG_CHKSUM_KW: 1}
             self.session.data_objects.put(obj_file, obj_path, **options)

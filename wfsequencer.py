@@ -60,7 +60,7 @@ class sequencer(object):
 
         self.log.info("iPUT on iRODS of : "+self.digitObjProperty['file'])
         try:
-            self.irods.doPut( self.digitObjProperty['dirname'], self.digitObjProperty['collname'], self.digitObjProperty['filename'])
+            self.irods.doPutIfAusent( self.digitObjProperty['dirname'], self.digitObjProperty['collname'], self.digitObjProperty['filename'])
         except Exception as ex:
             self.log.error("Could not execute a doPut ")
             self.log.error(ex)
