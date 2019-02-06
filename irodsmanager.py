@@ -61,7 +61,7 @@ class irodsDAO():
 
         obj_file = os.path.join(dirname, filename)
         obj_path = '{collname}/{filename}'.format(**locals())
-        self._checkCollExsist(collname)
+        self._checkCollExist(collname)
         
         # register file in test collection
         self.log.info("check obj_file : "+obj_file)
@@ -91,7 +91,7 @@ class irodsDAO():
 
         obj_file = os.path.join(dirname, filename)
         obj_path = '{collname}/{filename}'.format(**locals())
-        self._checkCollExsist(collname)
+        self._checkCollExist(collname)
         
         # register file in test collection
         self.log.info("check obj_file : "+obj_file)
@@ -116,7 +116,7 @@ class irodsDAO():
 
         obj_file = os.path.join(dirname, filename)
         obj_path = '{collname}/{filename}'.format(**locals())
-        self._checkCollExsist(collname)
+        self._checkCollExist(collname)
 
         # register file in test collection
         self.log.info("check obj_file : "+obj_file)
@@ -148,9 +148,9 @@ class irodsDAO():
         return ruleout
 
     #
-    # Check if a collection exsist, if not create recursively
+    # Check if a collection exists, if not create recursively
     #
-    def _checkCollExsist(self, collname):
+    def _checkCollExist(self, collname):
 
         self.log.info("check or create a collection recursively : "+collname)
         try:
