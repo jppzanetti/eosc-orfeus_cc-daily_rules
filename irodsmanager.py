@@ -50,7 +50,11 @@ class irodsDAO():
 
         self.log.info("try connection to irods")
         # Make iRODS connection
-        self.session = iRODSSession(host=str(self.config['IRODS']['HOST']), port=str(self.config['IRODS']['PORT']), user=str(self.config['IRODS']['USER']), password=str(self.config['IRODS']['PWD']), zone=str(self.config['IRODS']['ZONE']))
+        self.session = iRODSSession(host=str(self.config['IRODS']['HOST']),
+                                    port=str(self.config['IRODS']['PORT']),
+                                    user=str(self.config['IRODS']['USER']),
+                                    password=str(self.config['IRODS']['PWD']),
+                                    zone=str(self.config['IRODS']['ZONE']))
         self.log.info("done")
 
 
@@ -133,10 +137,23 @@ class irodsDAO():
             pass
 
 
-    #
-    # irods ingestion iPUT if file is not present in iCAT
-    #
     def doPutIfAusent(self, dirname, collname, filename):   
+        """Puts file in iRODS if there is no file already registered in the
+        same collection+filename.
+
+        Puts the file in the compund resource compResc, and purges the
+        cache. If the put is executed, the checksum is registered at
+        the same time in iCAT.
+
+        Parameters
+        ----------
+        dirname : str
+            Full path of the file in the local filesystem
+        collname : str
+            iRODS collection where the file should be put
+        filename : str
+            The name of both the local file and the iRODS data object
+        """
 
         self._irodsConnect()
 
@@ -165,11 +182,24 @@ class irodsDAO():
             pass
 
 
-    #
-    # irods ingestion iPUT if file is ausent in iCAT or updated
-    # registers a SHA256 checksum and uses it to compare versions
-    #
     def doPutIfUpdated(self, dirname, collname, filename):
+        """Puts file in iRODS if there is no file already registered in the
+        same collection+filename and with the same checksum.
+
+        Puts the file in the compund resource compResc, and purges the
+        cache. If the put is executed, the checksum is registered at
+        the same time in iCAT. The hashing algorithm used to compute
+        the checksum is SHA256.
+
+        Parameters
+        ----------
+        dirname : str
+            Full path of the file in the local filesystem
+        collname : str
+            iRODS collection where the file should be put
+        filename : str
+            The name of both the local file and the iRODS data object
+        """
 
         self._irodsConnect()
 
@@ -179,8 +209,6 @@ class irodsDAO():
 
         self.log.info("check obj_file : "+obj_file)
         self.log.info("check obj_path : "+obj_path)
-
-        self.log.info("check or create a collection recursively : "+collname)
 
         # Check whether the file is already in irods
         query = self.session.query(DataObject.name, DataObject.checksum).filter(DataObject.name == filename)
@@ -259,7 +287,10 @@ class irodsDAO():
         rule_total = self.load_rule(rule_path, path='"{object_path}"'.format(**locals()) )
         
         # prep  rule
-        myrule = Rule(self.session, body=rule_total['body'], params=rule_total['params'], output=rule_total['output'] )
+        myrule = Rule(self.session,
+                      body=rule_total['body'],
+                      params=rule_total['params'],
+                      output=rule_total['output'] )
         
         # exec rule
         try:
@@ -286,10 +317,15 @@ class irodsDAO():
         returnedMeta = {}
 
         # load rule from file
-        rule_total = self.load_rule(rule_path, source='"{object_path}"'.format(**locals()), destination='"{target_path}"'.format(**locals()) )
+        rule_total = self.load_rule(rule_path,
+                                    source='"{object_path}"'.format(**locals()),
+                                    destination='"{target_path}"'.format(**locals()) )
 
         # prep  rule
-        myrule = Rule(self.session, body=rule_total['body'], params=rule_total['params'], output=rule_total['output'] )
+        myrule = Rule(self.session,
+                      body=rule_total['body'],
+                      params=rule_total['params'],
+                      output=rule_total['output'] )
         
         # exec rule
         try:
@@ -315,10 +351,15 @@ class irodsDAO():
         self.log.info("exec  Registration Remote replicated object inside irods ")
 
         # load rule from file
-        rule_total = self.load_rule(rule_path, source='"{object_path}"'.format(**locals()), destination='"{target_path}"'.format(**locals()) )
+        rule_total = self.load_rule(rule_path,
+                                    source='"{object_path}"'.format(**locals()),
+                                    destination='"{target_path}"'.format(**locals()) )
 
         # prep  rule
-        myrule = Rule(self.session, body=rule_total['body'], params=rule_total['params'], output=rule_total['output'] )
+        myrule = Rule(self.session,
+                      body=rule_total['body'],
+                      params=rule_total['params'],
+                      output=rule_total['output'] )
         
         # exec rule
         try:
