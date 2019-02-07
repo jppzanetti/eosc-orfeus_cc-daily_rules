@@ -24,6 +24,8 @@ from irods.rule import Rule
 from irods.meta import iRODSMetaCollection
 from irods.exception import CollectionDoesNotExist
 
+import hashlib
+import base64
 
 #
 #  data access object class for irods
@@ -107,7 +109,7 @@ class irodsDAO():
 
 
     #
-    # irods ingestion iPUT
+    # irods ingestion iPUT, purging cache afterwards
     #
     def doPutPurgeCache(self, dirname, collname, filename):   
 
@@ -122,7 +124,7 @@ class irodsDAO():
 
         self.log.info("check or create a collection recursively : "+collname)
         try:
-            options = {kw.RESC_NAME_KW: "compResc", kw.PURGE_CACHE_KW: 1, kw.REG_CHKSUM_KW: 1}
+            options = {kw.RESC_NAME_KW: "compResc", kw.PURGE_CACHE_KW: 1}
             self.session.data_objects.put(obj_file, obj_path, **options)
             self.log.info("file put! : "+obj_path)
         except Exception as ex:
@@ -132,7 +134,7 @@ class irodsDAO():
 
 
     #
-    # irods ingestion iPUT
+    # irods ingestion iPUT if file is not present in iCAT
     #
     def doPutIfAusent(self, dirname, collname, filename):   
 
@@ -154,7 +156,48 @@ class irodsDAO():
             return
             
         try:
-            options = {kw.RESC_NAME_KW: "compResc", kw.PURGE_CACHE_KW: 1, kw.REG_CHKSUM_KW: 1}
+            options = {kw.RESC_NAME_KW: "compResc", kw.PURGE_CACHE_KW: 1}
+            self.session.data_objects.put(obj_file, obj_path, **options)
+            self.log.info("file put! : "+obj_path)
+        except Exception as ex:
+            self.log.error("Could not put a file_obj  ")         
+            self.log.error(ex)
+            pass
+
+
+    #
+    # irods ingestion iPUT if file is ausent in iCAT or updated
+    # registers a SHA256 checksum and uses it to compare versions
+    #
+    def doPutIfUpdated(self, dirname, collname, filename):
+
+        self._irodsConnect()
+
+        obj_file = os.path.join(dirname, filename)
+        obj_path = '{collname}/{filename}'.format(**locals())
+        self._checkCollExist(collname)
+
+        self.log.info("check obj_file : "+obj_file)
+        self.log.info("check obj_path : "+obj_path)
+
+        self.log.info("check or create a collection recursively : "+collname)
+
+        # Check whether the file is already in irods
+        query = self.session.query(DataObject.name, DataObject.checksum).filter(DataObject.name == filename)
+        if len(query.execute()) > 0:
+            # Compare checksums, exit if they're equal
+            for result in query:
+                obj_hash = result[DataObject.checksum]
+                file_hash = "sha2:" + helpers.compute_sha256_digest(obj_file)
+                
+                self.log.info("DataObject.checksum: " + obj_hash)
+                self.log.info("File checksum:       " + file_hash)
+                if obj_hash == file_hash:
+                    self.log.info("File already in iRODS. Put canceled.")
+                    return
+
+        try:
+            options = {kw.RESC_NAME_KW: "compResc", kw.PURGE_CACHE_KW: 1, kw.REG_CHKSUM_KW: ''}
             self.session.data_objects.put(obj_file, obj_path, **options)
             self.log.info("file put! : "+obj_path)
         except Exception as ex:
