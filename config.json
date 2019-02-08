@@ -6,6 +6,7 @@
     "STRUCTURE": "SDS",
     "ARCHIVE_ROOT": "/var/lib/data",
     "DEFAULT_LOG_FILE": "WFCatalog-collector.log",
+    "RULEMAP_FILE": "ruleMap.json",
     "PROCESSING_TIMEOUT": 120,
     "ENABLE_DUBLIN_CORE": true,
     "FILTERS": {
