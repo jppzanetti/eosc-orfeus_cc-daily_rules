@@ -17,20 +17,8 @@ from logging.handlers import TimedRotatingFileHandler
 import wfcollector
 import wfsequencer
 
-#
-# Load configuration from JSON
-#
-cfg_dir = os.path.dirname(os.path.realpath(__file__))
-print("load conf")
-with open(os.path.join(cfg_dir, 'config.json'), "r") as cfg:
-    config = json.load(cfg)
+CONFIG_FILE = 'config.json'
 
-
-  
-
-#
-# main()
-#
 class main():
 
     def __init__(self, parsedargs, config):
@@ -70,8 +58,8 @@ class main():
             self.dublinCore = wfdublincore.dublinCore(self.config, self.log) 
 
         #  file property      
-        digitObjProperty = {}        
-       
+        digitObjProperty = {}
+
         # get stations informations via webservices
         print("get datastations")        
         digitObjProperty["datastations"] = self.dublinCore.getDataStations()
@@ -91,15 +79,14 @@ class main():
             dirname, filename = os.path.split(file)
             digitObjProperty["file"] = file
             digitObjProperty["start_time"] = self.WFcollector._getDateFromFile(file)
-            collname = self.irodsPath ( file, self.config['IRODS']['BASE_PATH'])
-            colltarget = self.irodsPath ( file, self.config['IRODS']['REMOTE_PATH'])
+            collname = self.irodsPath(file, self.config['IRODS']['BASE_PATH'])
+            colltarget = self.irodsPath(file, self.config['IRODS']['REMOTE_PATH'])
             digitObjProperty["dirname"] = dirname
             digitObjProperty["filename"] = filename
             digitObjProperty["collname"] = collname
             digitObjProperty["object_path"] = '{collname}/{filename}'.format(**locals())
             digitObjProperty["target_path"] = '{colltarget}/{filename}'.format(**locals())
 
-            #
             # run rules sequence 
             sequencer.doSequence(digitObjProperty)
 
@@ -107,11 +94,11 @@ class main():
         print ("END Main ")
 
         self.log.info(" ** Sequence is done, collector synchronization completed in %s." % (datetime.datetime.now() - timeInitialized))
-    
+
     #
     # irods path maker
     # 
-    def irodsPath (self, file, irodsPathBase):
+    def irodsPath(self, file, irodsPathBase):
         
         fileSplit = os.path.basename(file).split('.')
         if irodsPathBase[:-1] != '/' : irodsPathBase = irodsPathBase+"/"
@@ -124,10 +111,14 @@ class main():
 
         return irodsPath
 
-    #
-    # build logger   
-    #  
     def _setupLogger(self, logfile):
+        """Initializes the logger.
+
+        Parameters
+        ----------
+        logfile : str
+            The name of the logfile.
+        """
 
         # Set up WFCatalogger
         self.log = logging.getLogger('WFCatalog Collector')
@@ -182,6 +173,12 @@ if __name__ == '__main__':
 
     # Option for Catalog DublinCore dc_on 
     parser.add_argument('--dc_on', help='extract meta Dublin Core for do_wf collection', action='store_true')
+
+    # Load configuration from JSON
+    cfg_dir = os.path.dirname(os.path.realpath(__file__))
+    print("load conf")
+    with open(os.path.join(cfg_dir, CONFIG_FILE), "r") as cfg:
+        config = json.load(cfg)
 
     # Get parsed arguments as a JSON dict to match
     # compatibility with an imported class

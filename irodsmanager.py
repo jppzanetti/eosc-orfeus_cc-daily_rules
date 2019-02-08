@@ -91,8 +91,8 @@ class irodsDAO():
        
     def doPut(self, dirname, collname, filename,
               purge_cache=True,
-              check='ausent'
-              register_checksum=False):
+              register_checksum=False,
+              check='ausent'):
         """Puts file in iRODS.
 
         Puts the file in the compund resource compResc, and purges the

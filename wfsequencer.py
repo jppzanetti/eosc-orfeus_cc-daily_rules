@@ -60,7 +60,12 @@ class sequencer(object):
 
         self.log.info("iPUT on iRODS of : "+self.digitObjProperty['file'])
         try:
-            self.irods.doPutIfUpdated( self.digitObjProperty['dirname'], self.digitObjProperty['collname'], self.digitObjProperty['filename'])
+            self.irods.doPut(self.digitObjProperty['dirname'],
+                             self.digitObjProperty['collname'],
+                             self.digitObjProperty['filename'],
+                             purge_cache=True,
+                             register_checksum=True,
+                             check='updated')
         except Exception as ex:
             self.log.error("Could not execute a doPut ")
             self.log.error(ex)
@@ -168,24 +173,23 @@ class sequencer(object):
     def purgeTemp(self):
         self.log.info("Purging file: "+self.digitObjProperty['file'])
         try:
-            self.irods.purgeTempFileIfOldRegistered(self.digitObjProperty['dirname'],
-                                                    self.digitObjProperty['collname'],
-                                                    self.digitObjProperty['filename'],
-                                                    7)
+            self.irods.purgeTempFile(self.digitObjProperty['dirname'],
+                                     self.digitObjProperty['collname'],
+                                     self.digitObjProperty['filename'],
+                                     7,
+                                     if_registered=True)
         except Exception as ex:
             self.log.error("Could not execute a purgeTemp")
             self.log.error(ex)
             pass
 
 
-    #
-    # run entire Sequence
-    #
     def doSequence(self, digitObjProperty):
+        """Runs the sequence defined in the rule map on the file given by digitObjProperty."""
 
         # load current property
         self.digitObjProperty = digitObjProperty
-        self.log.info(" --- --- START SEQUENCE FOR : "+self.digitObjProperty['file']+"\n")
+        self.log.info("\n" + " --- --- START SEQUENCE FOR : " + self.digitObjProperty['file'])
 
         # Log info for each file processed
         self.log.info( "collname: " + digitObjProperty["collname"])
@@ -196,7 +200,6 @@ class sequencer(object):
         for step in self.steps_definition:
             try:
                 self.log.info(self.ruleMap['RULE_MAP'][self.steps_definition[step]])
-
                 getattr(self, self.ruleMap['RULE_MAP'][self.steps_definition[step]])()
             except Exception as ex:
                 self.log.error(" Sequence error, could not execute rule: "+self.steps_definition[step])
