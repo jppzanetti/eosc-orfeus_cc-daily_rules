@@ -38,7 +38,7 @@ wfcatalog.py [-h] [--config] [--version]
              [--past {day,yesterday,week,fortnight,month}]
              [--date DATE] [--range RANGE]
              [--flags] [--csegs] [--hourly]
-	     [--logfile LOGFILE] [--rulemap MAPFILE]
+             [--logfile LOGFILE] [--rulemap MAPFILE]
              [--update] [--force] [--delete] [--dc_on]
 ```
 

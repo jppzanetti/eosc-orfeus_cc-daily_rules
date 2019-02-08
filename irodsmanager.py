@@ -149,7 +149,7 @@ class irodsDAO():
         Parameters
         ----------
         dirname : str
-            Full path of the file in the local filesystem
+            Full path of the file's directory in the local filesystem
         collname : str
             iRODS collection where the file should be put
         filename : str
@@ -195,7 +195,7 @@ class irodsDAO():
         Parameters
         ----------
         dirname : str
-            Full path of the file in the local filesystem
+            Full path of the file's directory in the local filesystem
         collname : str
             iRODS collection where the file should be put
         filename : str
@@ -253,9 +253,48 @@ class irodsDAO():
         full_filename = os.path.join(path, filename)
         creation_time = datetime.datetime.fromtimestamp(os.path.getctime(full_filename))
         if creation_time < limit_time:
-            os.remove(os.path.join(full_filename)
+            os.remove(os.path.join(full_filename))
             self.log.info('removed {}'.format(full_filename))
     
+
+    def purgeTempFileIfOldRegistered(self, dirname, collname, filename, n_days):
+        """Delete file if it was created more than n_days ago and is already
+        registered in iRODS.
+
+        Parameters
+        ----------
+        dirname : str
+            Full path of the file's directory in the local filesystem
+        collname : str
+            iRODS collection where the file should be put
+        filename : str
+            File name
+        n_days : int
+            Maximum age (in days) of files to be kept
+        """
+
+        obj_file = os.path.join(dirname, filename)
+        obj_path = '{collname}/{filename}'.format(**locals())
+
+        self.log.info("check obj_file : "+obj_file)
+        self.log.info("check obj_path : "+obj_path)
+
+        limit_time = datetime.datetime.now() - datetime.timedelta(days=n_days)
+
+        creation_time = datetime.datetime.fromtimestamp(os.path.getctime(obj_file))
+        if creation_time >= limit_time:
+            return
+    
+        self._irodsConnect()
+
+        # Check whether the file is already in irods
+        query = self.session.query(DataObject.name).filter(DataObject.name == filename)
+        if len(query.execute()) == 0:
+            self.log.info("File not in iRODS. Purge canceled.")
+            return
+
+        os.remove(os.path.join(obj_file))
+        self.log.info('removed {}'.format(obj_file))
 
     #
     # Execute a paramless rule

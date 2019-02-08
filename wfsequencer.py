@@ -168,7 +168,10 @@ class sequencer(object):
     def purgeTemp(self):
         self.log.info("Purging file: "+self.digitObjProperty['file'])
         try:
-            self.irods.purgeTempFileIfOld(self.digitObjProperty['dirname'], self.digitObjProperty['filename'], 7)
+            self.irods.purgeTempFileIfOldRegistered(self.digitObjProperty['dirname'],
+                                                    self.digitObjProperty['collname'],
+                                                    self.digitObjProperty['filename'],
+                                                    7)
         except Exception as ex:
             self.log.error("Could not execute a purgeTemp")
             self.log.error(ex)
