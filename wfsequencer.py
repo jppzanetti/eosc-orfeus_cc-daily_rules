@@ -24,7 +24,7 @@ class sequencer(object):
         #
         # load ruleMap from file
         cfg_dir = os.path.dirname(os.path.realpath(__file__))
-        with open(os.path.join(cfg_dir, 'ruleMap.json'), "r") as rlmp:
+        with open(os.path.join(cfg_dir, config['RULEMAP_FILE']), "r") as rlmp:
             self.ruleMap = json.load(rlmp)
 
         self.config = config
@@ -164,6 +164,16 @@ class sequencer(object):
             self.log.error(ex)
             pass          
         
+
+    def purgeTemp(self):
+        self.log.info("Purging file: "+self.digitObjProperty['file'])
+        try:
+            self.irods.purgeTempFileIfOld(self.digitObjProperty['dirname'], self.digitObjProperty['filename'], 7)
+        except Exception as ex:
+            self.log.error("Could not execute a purgeTemp")
+            self.log.error(ex)
+            pass
+
 
     #
     # run entire Sequence

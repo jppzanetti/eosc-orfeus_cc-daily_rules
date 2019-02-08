@@ -23,7 +23,7 @@ import wfsequencer
 cfg_dir = os.path.dirname(os.path.realpath(__file__))
 print("load conf")
 with open(os.path.join(cfg_dir, 'config.json'), "r") as cfg:
-  config = json.load(cfg)
+    config = json.load(cfg)
 
 
   
@@ -170,6 +170,9 @@ if __name__ == '__main__':
     # Set custom logfile
     parser.add_argument('--logfile', help='set custom logfile')
 
+    # Set custom rule map
+    parser.add_argument('--rulemap', help='set custom rule map file')
+
     # Options to update documents existing in the database, normally
     # files that are already processed are skipped
     # Updates can be forced (without checksum check)
@@ -183,6 +186,10 @@ if __name__ == '__main__':
     # Get parsed arguments as a JSON dict to match
     # compatibility with an imported class
     parsedargs = vars(parser.parse_args())
+
+    # Get custom rule map filename
+    if parsedargs['rulemap']:
+        config['RULEMAP_FILE'] = parsedargs['rulemap']
 
     ## wake-up
     main = main(parsedargs, config)

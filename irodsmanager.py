@@ -10,6 +10,10 @@ import os
 import json
 import textwrap
 
+import hashlib
+import base64
+import datetime
+
 import irods
 from irods.session import iRODSSession
 import irods.exception as ex
@@ -23,9 +27,6 @@ from irods.results import ResultSet
 from irods.rule import Rule
 from irods.meta import iRODSMetaCollection
 from irods.exception import CollectionDoesNotExist
-
-import hashlib
-import base64
 
 #
 #  data access object class for irods
@@ -233,6 +234,28 @@ class irodsDAO():
             self.log.error(ex)
             pass
 
+
+    def purgeTempFileIfOld(self, path, filename, n_days):
+        """Delete file if created more than n_days ago.
+
+        Parameters
+        ----------
+        path : str
+            Full path of the file directory
+        filename : str
+            File name
+        n_days : int
+            Maximum age (in days) of files to be kept
+        """
+
+        limit_time = datetime.datetime.now() - datetime.timedelta(days=n_days)
+
+        full_filename = os.path.join(path, filename)
+        creation_time = datetime.datetime.fromtimestamp(os.path.getctime(full_filename))
+        if creation_time < limit_time:
+            os.remove(os.path.join(full_filename)
+            self.log.info('removed {}'.format(full_filename))
+    
 
     #
     # Execute a paramless rule

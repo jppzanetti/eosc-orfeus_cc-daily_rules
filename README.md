@@ -37,7 +37,8 @@ wfcatalog.py [-h] [--config] [--version]
              [--dir DIR] [--file FILE] [--list LIST]
              [--past {day,yesterday,week,fortnight,month}]
              [--date DATE] [--range RANGE]
-             [--flags] [--csegs] [--hourly] [--logfile LOGFILE]
+             [--flags] [--csegs] [--hourly]
+	     [--logfile LOGFILE] [--rulemap MAPFILE]
              [--update] [--force] [--delete] [--dc_on]
 ```
 
@@ -57,6 +58,7 @@ Optional arguments:
 * `--csegs` Include continuous segments in result.
 * `--hourly` Include hourly granules in result.
 * `--logfile LOGFILE` Set custom logfile.
+* `--rulemap MAPFILE` Set custom rule map.
 * `--update` Update existing documents in the database.
 * `--force` Force file updates.
 * `--delete` Delete files from database.
