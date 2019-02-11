@@ -197,7 +197,7 @@ class sequencer(object):
         for step in self.ruleMap['SEQUENCE']:
             try:
                 self.log.info("Applying rule: " + self.ruleMap['RULE_MAP'][step])
-                #getattr(self, self.ruleMap['RULE_MAP'][step])()
+                getattr(self, self.ruleMap['RULE_MAP'][step])()
             except Exception as ex:
                 self.log.error("Sequence error, could not execute rule: "+self.steps_definition[step])
                 self.log.error(ex)
