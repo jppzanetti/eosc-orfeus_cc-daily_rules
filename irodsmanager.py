@@ -28,11 +28,8 @@ from irods.rule import Rule
 from irods.meta import iRODSMetaCollection
 from irods.exception import CollectionDoesNotExist
 
-#
-#  data access object class for irods
-#
 class irodsDAO():
-
+    """Data access object class for iRODS."""
 
     def __init__(self, config, log):
 
@@ -41,10 +38,9 @@ class irodsDAO():
         self.log = log
         self.config = config
 
-    #
-    # irods Connection
-    #
     def _irodsConnect(self):
+        """Checks whether there is a connection to iRODS estabilshed, and if
+        there isn't, connects to iRODS."""
 
         if self.session:
             return
@@ -59,10 +55,18 @@ class irodsDAO():
         self.log.info("done")
 
 
-    #
-    # irods ingestion iREG
-    #
     def doRegister(self, dirname, collname, filename):   
+        """Registers file in iRODS.
+
+        Parameters
+        ----------
+        dirname : `str`
+            Full path of the file's directory in the local filesystem.
+        collname : `str`
+            iRODS collection where the file should be registered.
+        filename : `str`
+            The name of both the local file and the iRODS data object.
+        """
 
         self._irodsConnect()
 
@@ -102,20 +106,20 @@ class irodsDAO():
 
         Parameters
         ----------
-        dirname : str
+        dirname : `str`
             Full path of the file's directory in the local filesystem.
-        collname : str
+        collname : `str`
             iRODS collection where the file should be put.
-        filename : str
+        filename : `str`
             The name of both the local file and the iRODS data object.
-        purge_cache : bool, optional
+        purge_cache : `bool`, optional
             Whether or not to purge the cache, equivalent to the
             `--purgec` option of iput (default True).
-        register_checksum : bool, optional
+        register_checksum : `bool`, optional
             Whether or not to register the SHA256 checksum in iRODS along
             the data object (default False).
-        check : str, optional
-            Options: 'none', 'ausent', 'updated'. If 'none', always
+        check : {'none', 'ausent', 'updated'}, optional
+            If 'none', always
             puts the file. When set to 'ausent', check first if file
             is registered in iRODS, and only puts it in case it's
             not. When set to 'updated', puts the file if it's ausent
@@ -177,15 +181,15 @@ class irodsDAO():
 
         Parameters
         ----------
-        dirname : str
+        dirname : `str`
             Full path of the file's directory in the local filesystem.
-        collname : str
+        collname : `str`
             iRODS collection where the file should be put.
-        filename : str
+        filename : `str`
             File name.
-        n_days : int
+        n_days : `int`
             Maximum age (in days) of files to be kept.
-        if_registered : bool, optional
+        if_registered : `bool`, optional
             When set to True, only removes the file if it's registed
             in iRODS (default True).
         """
@@ -358,6 +362,24 @@ class irodsDAO():
     # load irods rule from rule_file.r
     #    
     def load_rule(self, rule_file, **parameters):
+        """Loads a rule given a .r file and its parameters.
+
+        Parameters
+        ----------
+        rule_file : `str`
+            Full path of the file containing the rule.
+        **parameters : `dict`
+            The parameters for running the rule, in key/value pairs.
+
+        Returns
+        -------
+        `dict`
+            - ``params``: The parameters for running the rule in iRODS
+                          format, just adding '*' before each key (`dict`).
+            - ``body``: The rule's body (`str`).
+            - ``output``: The output line of the rule (`str`).
+        """
+
         results = {}
         params = {}
         output = ''

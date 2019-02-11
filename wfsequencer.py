@@ -11,12 +11,8 @@ import json
 import collections
 
 
-#
-# implement rules sequence
-#
 class sequencer(object):
-
-    # init
+    """Implements and runs the rule sequence."""
 
     def __init__(self, config, log, irods, mongo, WFcollector, dublinCore):
 
@@ -49,11 +45,14 @@ class sequencer(object):
             pass
 
 
-    #..................................... iPUT_INGESTION - 
-    #
-    # Exec Proc: Put Digital objects into iRODS
-    #
     def put(self):
+        """Defines an ingestion policy that puts a new digital object into iRODS.
+
+        The file is only put if it is not already registered in iRODS
+        or if it is registered with a different checksum. This policy
+        registers the file's SHA256 checksum in iRODS and purges the
+        cache.
+        """
 
         self.log.info("iPUT on iRODS of : "+self.digitObjProperty['file'])
         try:
@@ -168,6 +167,8 @@ class sequencer(object):
         
 
     def purgeTemp(self):
+        """Defines the policy to delete the file from the temporary archive."""
+
         self.log.info("Purging file: "+self.digitObjProperty['file'])
         try:
             self.irods.purgeTempFile(self.digitObjProperty['dirname'],
@@ -182,7 +183,7 @@ class sequencer(object):
 
 
     def doSequence(self, digitObjProperty):
-        """Runs the sequence defined in the rule map on the file given by digitObjProperty."""
+        """Runs the sequence defined by the rule map on the file given by digitObjProperty."""
 
         # load current property
         self.digitObjProperty = digitObjProperty
