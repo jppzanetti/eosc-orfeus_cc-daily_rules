@@ -26,7 +26,6 @@ The configuration is done in two JSON files: config.json and ruleMap.json.
 The first one, config.json, contains the configurations for managing policies, for example: MongoDB and iRODS connection configurations, Dublin Core definitions, log file name, and filters.
 
 The second file, ruleMap.json, tells wfsequencer.py what is the workflow to be applied to each file. It defines:
-1) which rules are available, in `_list_available_rules_`,
 1) the mapping between rules and methods in wfsequencer.py, in `RULE_MAP`,
 1) the sequence in which the rules are called, in `SEQUENCE`, and
 1) the locations of external iRODS rules in disk, in `RULE_PATHS`.
