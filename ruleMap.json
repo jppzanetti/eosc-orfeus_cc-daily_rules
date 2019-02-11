@@ -1,12 +1,12 @@
 {
     "RULE_MAP_VERSION": "0.0.1",
     "VERSION_DATE": "2019-01-10", 
-    "SEQUENCE": {
-        "1": "INGESTION",
-        "2": "TEST_RULE",
-        "6": "DUBLIN_CORE",
-        "7": "WF_CATALOG"
-    },
+    "SEQUENCE": [
+        "INGESTION",
+        "TEST_RULE",
+        "DUBLIN_CORE",
+        "WF_CATALOG"
+    ],
     "RULE_MAP": {
         "INGESTION": "put",
         "TEST_RULE": "testRule",
@@ -21,14 +21,5 @@
         "PID": "/var/lib/irods/myrules/source_final/eudatPidSingleCheck2.r",
         "REPLICA": "/var/lib/irods/myrules/source_final/eudatReplication2.r",
         "REGISTER": "/var/lib/irods/myrules/source_final/RegRule.r"
-    },
-    "_list_available_rules_": {
-        "1": "INGESTION",
-        "2": "TEST_RULE",
-        "3": "PID",
-        "4": "REPLICA",
-        "5": "REGISTER",
-        "6": "DUBLIN_CORE",
-        "7": "WF_CATALOG"
     }
 }

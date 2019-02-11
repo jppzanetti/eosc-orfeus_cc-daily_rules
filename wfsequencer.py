@@ -34,9 +34,6 @@ class sequencer(object):
         self.WFcollector = WFcollector
         self.dublinCore = dublinCore
 
-        self.steps_definition = collections.OrderedDict(sorted(self.ruleMap['SEQUENCE'].items()))
-       
-
     #..................................... iREG_INGESTION - 
     #
     # Exec Proc: Register Digital objects into iRODS
@@ -192,17 +189,17 @@ class sequencer(object):
         self.log.info("\n" + " --- --- START SEQUENCE FOR : " + self.digitObjProperty['file'])
 
         # Log info for each file processed
-        self.log.info( "collname: " + digitObjProperty["collname"])
-        self.log.info( "dirname: "+ digitObjProperty["dirname"])
-        self.log.info( "filename: "+ digitObjProperty["filename"])
+        self.log.info("collname: " + digitObjProperty["collname"])
+        self.log.info("dirname: "+ digitObjProperty["dirname"])
+        self.log.info("filename: "+ digitObjProperty["filename"])
 
         # for each step apply rule
-        for step in self.steps_definition:
+        for step in self.ruleMap['SEQUENCE']:
             try:
-                self.log.info(self.ruleMap['RULE_MAP'][self.steps_definition[step]])
-                getattr(self, self.ruleMap['RULE_MAP'][self.steps_definition[step]])()
+                self.log.info("Applying rule: " + self.ruleMap['RULE_MAP'][step])
+                #getattr(self, self.ruleMap['RULE_MAP'][step])()
             except Exception as ex:
-                self.log.error(" Sequence error, could not execute rule: "+self.steps_definition[step])
+                self.log.error("Sequence error, could not execute rule: "+self.steps_definition[step])
                 self.log.error(ex)
                 pass
                     

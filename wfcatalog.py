@@ -28,6 +28,7 @@ class main():
         self.parsedargs = parsedargs 
 
         # mongo
+        self.mongo = None
         if self.config['MONGO']['ENABLED']:
             import mongomanager
             self.mongo = mongomanager.MongoDAO(self.config, self.log)
@@ -41,28 +42,31 @@ class main():
         timeInitialized = datetime.datetime.now()
 
         # connect to mongo DB
-        self.mongo._connect()
+        if self.mongo:
+            self.mongo._connect()
 
         # WF Collector
         self.WFcollector = wfcollector.WFCatalogCollector( self.parsedargs, self.config, self.mongo, self.log)
         print("WFcollector ")
 
         # iRODS
+        self.irods = None
         if self.config['IRODS']['ENABLED']:
             import irodsmanager
             self.irods = irodsmanager.irodsDAO(self.config, self.log)
 
+        #  file property      
+        digitObjProperty = {}
+
         # Dublin Core
+        self.dublinCore = None
         if self.config['DUBLIN_CORE']['ENABLED']:
             import wfdublincore
             self.dublinCore = wfdublincore.dublinCore(self.config, self.log) 
 
-        #  file property      
-        digitObjProperty = {}
-
-        # get stations informations via webservices
-        print("get datastations")        
-        digitObjProperty["datastations"] = self.dublinCore.getDataStations()
+            # get stations informations via webservices
+            print("get datastations")        
+            digitObjProperty["datastations"] = self.dublinCore.getDataStations()
 
         # get *filtered*  DigitalObject list to process
         print("get FileList") 
@@ -138,6 +142,12 @@ class main():
 
 if __name__ == '__main__':
 
+    # Load configuration from JSON
+    cfg_dir = os.path.dirname(os.path.realpath(__file__))
+    print("load conf")
+    with open(os.path.join(cfg_dir, CONFIG_FILE), "r") as cfg:
+        config = json.load(cfg)
+
     # Parse cmd line arguments
     parser = argparse.ArgumentParser(description='Processes mSEED files and ingests waveform metadata to a Mongo repository.')
 
@@ -173,12 +183,6 @@ if __name__ == '__main__':
 
     # Option for Catalog DublinCore dc_on 
     parser.add_argument('--dc_on', help='extract meta Dublin Core for do_wf collection', action='store_true')
-
-    # Load configuration from JSON
-    cfg_dir = os.path.dirname(os.path.realpath(__file__))
-    print("load conf")
-    with open(os.path.join(cfg_dir, CONFIG_FILE), "r") as cfg:
-        config = json.load(cfg)
 
     # Get parsed arguments as a JSON dict to match
     # compatibility with an imported class
