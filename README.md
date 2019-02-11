@@ -19,6 +19,39 @@ All the metadata extracted here are inserted into mongoDB instance that is the s
 
 At this time we have a few rules and some actions but, in the future we can think about increase or change they, following the ORFEUS_CC nodes needs/policy. 
 
+### Policies
+
+What we call _policies_ are simple operations that can be applied to a file, without any kind of knowledge of state of the workflow.
+
+For example, an ingestion policy can be an operation that checks is the given file is already registered in the archive, and if it's not, adds it to the archive. Other examples can be a PID assignment, or a replication of a data object.
+
+### How to add a new policy to the workflow?
+
+1) Define a new method in `wfsequencer.py`, potentially calling code in different modules that implement the policy.
+1) In your rule map JSON file, add a new key/value pair to `RULE_MAP`, linking a policy name to the name of the method you defined in the step above.
+1) Also in the rule map JSON, insert the new policy in the `SEQUENCE` array at the point of the workflow you want it to run.
+
+##### Example
+
+Let's say a new method `examplePolicy()` was created in `wfsequencer.py`, implementing a new policy. In the rule map JSON file, two changes are made. The first adds the method to `RULE_MAP`, naming the policy:
+```
+"RULE_MAP": {
+    ...,
+    "NEW_EXAMPLE_POLICY": "examplePolicy",
+    ...
+},
+```
+The second change is to add the new policy at the point it should be executed in `SEQUENCE`:
+```
+"SEQUENCE": [
+    ...,
+    "NEW_EXAMPLE_POLICY",
+    ...
+],
+```
+
+Now the `NEW_EXAMPLE_POLICY` will be executed for every file given to the workflow manager the next time.
+
 ### Configuration
 
 The configuration is done in two JSON files: config.json and ruleMap.json.
