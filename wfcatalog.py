@@ -46,7 +46,7 @@ class main():
             self.mongo._connect()
 
         # WF Collector
-        self.WFcollector = wfcollector.WFCatalogCollector( self.parsedargs, self.config, self.mongo, self.log)
+        self.WFcollector = wfcollector.WFCatalogCollector(self.parsedargs, self.config, self.mongo, self.log)
         print("WFcollector ")
 
         # iRODS
@@ -55,7 +55,7 @@ class main():
             import irodsmanager
             self.irods = irodsmanager.irodsDAO(self.config, self.log)
 
-        #  file property      
+        # file property      
         digitObjProperty = {}
 
         # Dublin Core
@@ -68,15 +68,13 @@ class main():
             print("get datastations")        
             digitObjProperty["datastations"] = self.dublinCore.getDataStations()
 
-        # get *filtered*  DigitalObject list to process
+        # get *unfiltered* DigitalObject list to process
         print("get FileList") 
-        files = self.WFcollector.getFileList()
+        files = self.WFcollector.getFileList(filter=False)
         # set sequencer 
-        sequencer = wfsequencer.sequencer(self.config, self.log, self.irods, self.mongo, self.WFcollector, self.dublinCore )
+        sequencer = wfsequencer.sequencer(self.config, self.log, self.irods, self.mongo, self.WFcollector, self.dublinCore)
 
-        #
-        # applay rules on each file
-        #
+        # apply rules on each file
         for file in files:
 
             # Digital Object Property extraction            

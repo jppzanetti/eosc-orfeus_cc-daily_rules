@@ -178,33 +178,17 @@ class WFCatalogCollector():
     """
     print(self.config["VERSION"])
  
-  def getFileList(self ):
-    # 1. Get files for processing,
-    # 2. filter them,
-    # 3. process them
-    #print ("setOption")
+  def getFileList(self, filter=True):
     self._setOptions()
-
-    #print ("_getFiles")
     self._getFiles()
-    #print (self.files)
 
-    #print ("_filterFiles")
-    self._filterFiles()
-    #print (self.files)
-    #print ("END ***")
+    if filter:
+      self._filterFiles()
 
     return self.files
 
-    # Delete or process files
-    #if self.args['delete']:
-    #  self._deleteFiles()
-    #else:
-    #  self._processFiles()
 
-
-
-  def process(self ):
+  def process(self):
     """
     WFCatalogCollector.process
     > processes data with options
