@@ -24,28 +24,34 @@ class dublinCore():
         print("dublinCore ")
         self.log = log
         self.config = config
-        
-    #
-    # Main DC Meta processing
-    #
-    def processDCmeta(self, mongo, irods, collname, start_time, file, datastations): 
-              
+
+    def processDCmeta(self, mongo, irods, collname, start_time, file, datastations):
+        """Process Dublin Core metadata for the given data object.
+
+        Parameters
+        ----------
+        mongo : `mongomanager.mongoDAO`
+            Connection to the Mongo DB storing the metadata.
+        irods : `irodsmanager.irodsDAO`
+            Connection to the iRODS managing the archive.
+        collname : `str`
+            Full collection name.
+        start_time : `datetime`
+            Record date.
+        file : `str`
+            Full file path in the file system.
+        datastations : `dict`
+            A catalog of station coordinates given by `dublinCore.getDataStations`.
+        """
+
         fileStart = datetime.datetime.now()
 
         self.log.info("Starting processing DC for file %s", file)
 
         try:
-
-            # prod.
             my_doc = self._createDataObject(mongo, irods, collname, start_time, file, datastations)
             if my_doc is not None:
-                #
-                #print(my_doc)
                 mongo._storeWFDataObject(my_doc)
-
-            # test 
-            #docu = self._createDataObject(file)
-            #print(docu)
 
         except Exception as ex:
             self.log.error("Could not compute DublinCore metadata")
@@ -53,8 +59,6 @@ class dublinCore():
             pass
 
         self.log.info("Completed processing DC for file in %s" % (datetime.datetime.now() - fileStart))
-
-        #print("Completed processing  DC for file in %s" % (datetime.datetime.now() - fileStart))
 
 
     #
@@ -106,9 +110,8 @@ class dublinCore():
     def _createDataObject(self, mongo, irods, collname, start_time, file, datastations):       
 
         currentCursor  = mongo.getFileDataObject(file)
-
         if currentCursor.count() != 0:
-            self.log.info(file+" :: file already present!")
+            self.log.info(file + " :: file already present!")
             return None
 
         dirname, filename = os.path.split(file)

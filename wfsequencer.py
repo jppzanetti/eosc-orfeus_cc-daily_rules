@@ -12,7 +12,22 @@ import collections
 
 
 class sequencer(object):
-    """Implements and runs the rule sequence."""
+    """Implements and runs the rule sequence on a file.
+
+    Attributes
+    ----------
+    digitObjProperty : `dict`
+        The properties of the digital object being processed.
+        - ``file``: Full file path (`str`).
+        - ``filename``: Filename (`str`).
+        - ``dirname``: Full path of the directory that contains the file (`str`).
+        - ``collname``: Full name of the collection (`str`).
+        - ``object_path``: Full logical path of the data object (`str`).
+        - ``target_path``: Full logical path of the replica (`str`).
+        - ``start_time``: Date of record (`datetime`).
+        - ``datastations``: The catalog of station coordinates
+                            given by `dublinCore.getDataStations` (`dict`).
+    """
 
     def __init__(self, config, log, irods, mongo, WFcollector, dublinCore):
 
@@ -141,8 +156,12 @@ class sequencer(object):
         
         self.log.info("call process DUBLIN CORE meta of : "+self.digitObjProperty['file'])
         try:
-            
-            self.dublinCore.processDCmeta(self.mongo, self.irods, self.digitObjProperty['collname'], self.digitObjProperty['start_time'], self.digitObjProperty['file'], self.digitObjProperty['datastations'])
+            self.dublinCore.processDCmeta(self.mongo,
+                                          self.irods,
+                                          self.digitObjProperty['collname'],
+                                          self.digitObjProperty['start_time'],
+                                          self.digitObjProperty['file'],
+                                          self.digitObjProperty['datastations'])
             self.log.info(" DUBLIN CORE for digitalObject: "+self.digitObjProperty['object_path']+" is: OK" )
         except Exception as ex:
             self.log.error("Could not process DublinCore metadata")
