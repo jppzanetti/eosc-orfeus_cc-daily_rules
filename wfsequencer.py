@@ -16,6 +16,20 @@ class sequencer(object):
 
     Attributes
     ----------
+    config : `dict`
+        The configuration options loaded from the config file. See config.json.
+    ruleMap : `dict`
+        The rule mapping loaded from the file. See ruleMap.json.
+    log : `logging.Logger`
+        The WFCatalog Logger object.
+    irods : `irodsmanager.irodsDAO`
+        Connection to the iRODS managing the archive.
+    mongo : `mongomanager.MongoDAO`
+        Connection to the Mongo DB storing the metadata.
+    WFCollector : `wfcollector.WFCatalogCollector`
+        WF Catalog collector to compute metadata.
+    dublinCore : `wfdublincore.dublinCore`
+        Dublin Core metadata processor.
     digitObjProperty : `dict`
         The properties of the digital object being processed.
         - ``file``: Full file path (`str`).
@@ -32,7 +46,7 @@ class sequencer(object):
     def __init__(self, config, log, irods, mongo, WFcollector, dublinCore):
 
         print("sequencer ")
-        #
+
         # load ruleMap from file
         cfg_dir = os.path.dirname(os.path.realpath(__file__))
         with open(os.path.join(cfg_dir, config['RULEMAP_FILE']), "r") as rlmp:
@@ -83,11 +97,9 @@ class sequencer(object):
             pass
 
 
-    #..................................... TEST_RULE - 
-    #
-    # Exec Rule: test rule execution w/o params (called directly self.digitObjProperty['file'].r)
-    #
     def testRule(self):
+        """Loads and executes the parameterless iRODS rule in the file pointed
+        by TEST_RULE in the rule map."""
         rule_path =  self.ruleMap['RULE_PATHS']['TEST_RULE']
         self.log.info("exec TEST rule  on  : "+self.digitObjProperty['file'])
 
@@ -97,8 +109,6 @@ class sequencer(object):
             self.log.error("Could not execute a rule")
             self.log.error(ex)
             pass
-        
-        #return myvalue    
 
 
     #..................................... PID - 
