@@ -14,7 +14,7 @@ import csv
 import http.client
 import datetime
 
-from irods.exception import DataObjectDoesNotExist
+from irods.exception import (DataObjectDoesNotExist, CollectionDoesNotExist)
 
 #
 # class for process Dublin Core
@@ -61,7 +61,7 @@ class dublinCore():
 
         except Exception as ex:
             self.log.error("Could not compute DublinCore metadata")
-            self.log.error(ex)
+            self.log.error(ex, exc_info=True)
             pass
 
         self.log.info("Completed processing DC for file in %s" % (datetime.datetime.now() - fileStart))
@@ -127,11 +127,11 @@ class dublinCore():
             PID = obj.metadata.get_one("PID").value
             iPath = obj.path
 
-        except DataObjectDoesNotExist:
+        except (DataObjectDoesNotExist, CollectionDoesNotExist):
             self.log.error("Data object not registered in iRODS: " + os.path.basename(file))
             return None
 
-        except Exception as ex:
+        except KeyError as ex:
             # failure PID check
             self.log.error("PID missing on: " + os.path.basename(file) + " : insert fake pid")
             PID = '11099/*********fakePid**********'
