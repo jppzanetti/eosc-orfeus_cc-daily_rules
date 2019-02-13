@@ -355,6 +355,9 @@ class WFCatalogCollector():
         else:
             raise Exception("Input is empty. Use --dir, --file, or --list to specify a directory, file, or list of files to process.")
 
+        # Set number of files
+        self.totalFiles = len(self.files)
+
     def _validateFilters(self):
         """
         WFCatalogCollector._validateFilters
