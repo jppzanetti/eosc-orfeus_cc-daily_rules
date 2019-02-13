@@ -117,7 +117,7 @@ class dublinCore():
 
         currentCursor  = mongo.getFileDataObject(file)
         if currentCursor.count() != 0:
-            self.log.info(file + " :: file already present!")
+            self.log.info(file + ": DC metadata already present!")
             return None
 
         dirname, filename = os.path.split(file)
