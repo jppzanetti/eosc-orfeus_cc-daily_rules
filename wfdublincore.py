@@ -14,6 +14,8 @@ import csv
 import http.client
 import datetime
 
+from irods.exception import DataObjectDoesNotExist
+
 #
 # class for process Dublin Core
 #
@@ -28,9 +30,13 @@ class dublinCore():
     def processDCmeta(self, mongo, irods, collname, start_time, file, datastations):
         """Process Dublin Core metadata for the given data object.
 
+        If the object is not registered in the archive, or the
+        metadata for it is already present in the database, does
+        nothing.
+
         Parameters
         ----------
-        mongo : `mongomanager.mongoDAO`
+        mongo : `mongomanager.MongoDAO`
             Connection to the Mongo DB storing the metadata.
         irods : `irodsmanager.irodsDAO`
             Connection to the iRODS managing the archive.
@@ -120,15 +126,19 @@ class dublinCore():
             obj = irods.getObject(obj_path)
             PID = obj.metadata.get_one("PID").value
             iPath = obj.path
-         
+
+        except DataObjectDoesNotExist:
+            self.log.error("Data object not registered in iRODS: " + os.path.basename(file))
+            return None
+
         except Exception as ex:
             # failure PID check
-            self.log.error("PID missing on: "+os.path.basename(file)+" : insert fake pid")
+            self.log.error("PID missing on: " + os.path.basename(file) + " : insert fake pid")
             PID = '11099/*********fakePid**********'
             iPath = obj_path
             pass
-        
-        
+
+
         #Lat-lon-elevation
         sta = os.path.basename(file).split('.')[1]
         net = os.path.basename(file).split('.')[0]
