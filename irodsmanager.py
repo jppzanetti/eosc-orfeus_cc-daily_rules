@@ -40,7 +40,7 @@ class irodsDAO():
 
     def _irodsConnect(self):
         """Checks whether there is a connection to iRODS estabilshed, and if
-        there isn't, connects to iRODS."""
+        there isn't, connects to iRODS, using the stored configuration."""
 
         if self.session:
             return
@@ -217,10 +217,14 @@ class irodsDAO():
         os.remove(os.path.join(obj_file))
         self.log.info('removed {}'.format(obj_file))
 
-    #
-    # Execute a paramless rule
-    #
     def _ruleExec(self, rule_file_path):
+        """Reads and runs a parameterless rule from a file.
+
+        Parameters
+        ----------
+        rule_file_path : `str`
+            Path to rule file.
+        """
 
         self._irodsConnect()
         #print("path rule: "+rule_file_path)
@@ -231,10 +235,15 @@ class irodsDAO():
 
         return ruleout
 
-    #
-    # Check if a collection exists, if not create recursively
-    #
     def _checkCollExist(self, collname):
+        """Creates a collection in the archive, recursively. Does nothing if
+        already present.
+
+        Parameters
+        ----------
+        collname : `str`
+            Name of collection.
+        """
 
         self.log.info("check or create a collection recursively : "+collname)
         try:
@@ -246,10 +255,13 @@ class irodsDAO():
             pass
 
 
-    #
-    # get Digital Object
-    #
     def getObject(self, obj_path):
+        """Gets a digital object from iRODS.
+
+        Parameters
+        ----------
+        obj_path : `str`
+            Full logical path to object (/zone/collection/object)."""
 
         self._irodsConnect()
 
@@ -358,9 +370,6 @@ class irodsDAO():
         return 1 #returnedMeta  
 
 
-    #
-    # load irods rule from rule_file.r
-    #    
     def load_rule(self, rule_file, **parameters):
         """Loads a rule given a .r file and its parameters.
 

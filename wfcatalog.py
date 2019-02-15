@@ -33,10 +33,8 @@ class main():
             import mongomanager
             self.mongo = mongomanager.MongoDAO(self.config, self.log)
 
-    #
-    # Main Run
-    #        
-    def mainProcess(self ):
+
+    def mainProcess(self):
 
         print ("START Main")      
         timeInitialized = datetime.datetime.now()
@@ -97,10 +95,17 @@ class main():
 
         self.log.info(" ** Sequence is done, collector synchronization completed in %s." % (datetime.datetime.now() - timeInitialized))
 
-    #
-    # irods path maker
-    # 
+
     def irodsPath(self, file, irodsPathBase):
+        """Computes the full logical iRODS collection name from the file name.
+
+        Parameters
+        ----------
+        file : `str`
+            The filename.
+        irodsPathBase : `str`
+            The base collection in iRODS that hosts the archive.
+        """
         
         fileSplit = os.path.basename(file).split('.')
         if irodsPathBase[:-1] != '/' : irodsPathBase = irodsPathBase+"/"

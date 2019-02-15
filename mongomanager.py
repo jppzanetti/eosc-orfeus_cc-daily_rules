@@ -40,7 +40,7 @@ class MongoDAO():
           self.db.authenticate(self.config['MONGO']['USER'], self.config['MONGO']['PASS'])
 
         self._connected = True
-        
+
     #
     # get wf_do FileDataObject
     #
@@ -48,9 +48,6 @@ class MongoDAO():
 
         return self.db.wf_do.find({'fileId': os.path.basename(file)})
 
-    #
-    #
-    #
     def _storeFileDataObject(self, obj):
         """
         MongoDatabase._storeFileDataObject

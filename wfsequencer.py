@@ -59,11 +59,8 @@ class sequencer(object):
         self.WFcollector = WFcollector
         self.dublinCore = dublinCore
 
-    #..................................... iREG_INGESTION - 
-    #
-    # Exec Proc: Register Digital objects into iRODS
-    #
     def register(self):
+        """Register the new data object into iRODS."""
 
         self.log.info("iREG on iRODS of : "+self.digitObjProperty['file'])
         try:
@@ -158,11 +155,8 @@ class sequencer(object):
         #return retValue
 
 
-    #..................................... DUBLINCORE_META - 
-    #
-    # Exec Proc: Store DublinCore metadata into mongo WF_CATALOG
-    #           
     def DublinCoreMeta(self):
+        """Store Dublin Core metadata in the Mongo database."""
         
         self.log.info("call process DUBLIN CORE meta of : "+self.digitObjProperty['file'])
         try:
